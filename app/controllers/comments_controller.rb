@@ -14,6 +14,8 @@ class CommentsController < ApplicationController
     @comment = @article.comments.create(comment_params)
 
     if @article and @comment.persisted?
+      # Process comment asynchronously
+      ApprovalJob.perform_async(@comment.id)
       render json: {article: @article, article_comments: @article.comments}, status: :ok
     else
       render json: @article, status: :unprocessable_entity

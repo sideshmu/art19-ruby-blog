@@ -70,3 +70,6 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+# Adding sidekiq for async processing
+gem 'sidekiq'
