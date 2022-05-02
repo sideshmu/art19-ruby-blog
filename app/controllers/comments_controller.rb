@@ -40,6 +40,27 @@ class CommentsController < ApplicationController
   end
 
   ##
+  # Update comment
+  # PATCH/PUT /articles/:article_id/comments/:id
+  # JSON Data:
+  # {
+  #   "commenter": "Example Commenter",
+  #   "body": "Example Comment Body",
+  #   "status": "Example Status"
+  # }
+  def update
+    @article = Article.find_by_id(params[:article_id])
+    @comment = @article.comments.find_by_id(params[:id])
+
+    if @article and @comment and @comment.update(comment_params)
+      ApprovalJob.perform_async(@comment.id)
+      render json: {article: @article, comment: @comment}, status: :ok
+    else
+      render json: @article, status: :unprocessable_entity
+    end
+  end
+
+  ##
   # Destroy comment on an article
   # DELETE /articles/:article_id/comments/:id
   def destroy
