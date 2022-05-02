@@ -1,5 +1,16 @@
 class CommentsController < ApplicationController
   skip_before_action :verify_authenticity_token
+
+  ##
+  # Retrieve all approved comments for an article
+  # GET /articles/:article_id/comments
+  def index
+    @article = Article.find_by_id(params[:article_id])
+    if @article
+      render json: @article.comments.where(approval: "approved")
+    end
+  end
+
   ##
   # Create new comment on an article
   # POST /articles/:article_id/comments
