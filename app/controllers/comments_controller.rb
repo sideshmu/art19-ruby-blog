@@ -7,7 +7,13 @@ class CommentsController < ApplicationController
   def index
     @article = Article.find_by_id(params[:article_id])
     if @article
-      render json: @article.comments.where(approval: "approved")
+      if params[:approval].present?
+        render json: @article.comments.where(approval: params[:approval])
+      else 
+        render json: @article.comments.where(approval: "approved")
+      end
+    else
+      render json: @article, status: :unprocessable_entity
     end
   end
 
