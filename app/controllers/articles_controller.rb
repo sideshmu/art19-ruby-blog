@@ -89,6 +89,14 @@ class ArticlesController < ApplicationController
     end
   end
 
+  ##
+  # Retrieve articles that have a given tag id
+  # GET /retrieve_articles?tag_id=<tag_id>
+  def retrieve_by_tag_id
+    @articles = Article.includes(:tags).where(tags: { id: params[:tag_id] })
+    render json: @articles, status: :ok
+  end
+
   private
     def article_params
       params.require(:article).permit(:title, :body, :status)
