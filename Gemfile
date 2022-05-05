@@ -73,3 +73,9 @@ end
 
 # Adding sidekiq for async processing
 gem 'sidekiq'
+
+# Adding rspec for testing
+
+gem "rspec-rails", "~> 5.1"
+gem 'rspec-sidekiq'
+

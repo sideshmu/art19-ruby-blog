@@ -36,3 +36,6 @@
 
 # Ignore dump.rdb file
 dump.rdb
+
+# Ignore .rspec
+.rspec
