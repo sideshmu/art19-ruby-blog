@@ -1,24 +1,24 @@
 class ArticlesController < ApplicationController
   skip_before_action :verify_authenticity_token
   ##
-  # Retrieve all articles
-  # GET /articles/
+  # Retrieve all articles OR optionally pass 'tag_id' param to
+  # Retrieve all aritlces with given 'tag_id'
+  # GET /articles[?tag_id=<tag_id>]
   def index
-    @articles = Article.all
-    render json: @articles, status: :ok
+    unless params[:tag_id]
+      @articles = Article.all
+    else
+      @articles = Article.includes(:tags).where(tags: { id: params[:tag_id] })
+    end
+    render json: @articles
   end
 
   ##
   # Retrieve article by :id
   # GET /articles/:id
   def show
-    @article = Article.find_by_id(params[:id])
-
-    if @article
-      render json: @article, status: :ok
-    else
-      render json: @article, status: :unprocessable_entity
-    end
+    @article = Article.find(params[:id])
+    render json: @article
   end
 
   # ##
@@ -40,7 +40,7 @@ class ArticlesController < ApplicationController
   def create
     @article = Article.new(article_params)
     if @article.save
-      render json: @article, status: :ok
+      render json: @article, status: :created
     else
       render json: @article.errors, status: :unprocessable_entity
     end
@@ -67,9 +67,9 @@ class ArticlesController < ApplicationController
   #   "status": "public"
   # }
   def update
-    @article = Article.find_by_id(params[:id])
+    @article = Article.find(params[:id])
 
-    if @article and @article.update(article_params)
+    if @article.update(article_params)
       render json: @article, status: :ok
     else
       render json: @article, status: :unprocessable_entity
@@ -80,21 +80,13 @@ class ArticlesController < ApplicationController
   # Destroy article
   # DELETE /articles/:id
   def destroy
-    @article = Article.find_by_id(params[:id])
+    @article = Article.find(params[:id])
 
-    if @article and @article.destroy
-      render json: {msg: "Deleted Article #{params[:id]} successfully!"}, status: :ok
+    if @article.destroy
+      render json: { msg: "Deleted Article #{params[:id]} successfully!" }, status: :no_content
     else
       render json: @article, status: :unprocessable_entity
     end
-  end
-
-  ##
-  # Retrieve articles that have a given tag id
-  # GET /retrieve_articles?tag_id=<tag_id>
-  def retrieve_by_tag_id
-    @articles = Article.includes(:tags).where(tags: { id: params[:tag_id] })
-    render json: @articles, status: :ok
   end
 
   private
