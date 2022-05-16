@@ -12,7 +12,7 @@ class CommentsController < ApplicationController
       if params[:approval].present?
         render json: @article.comments.where(approval: params[:approval])
       else 
-        render json: @article.comments.where(approval: "approved")
+        render json: @article.comments.where(approval: Comment::APPROVAL_STATUS_APPROVED)
       end
     else
       render json: @article, status: :unprocessable_entity
