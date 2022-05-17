@@ -100,6 +100,6 @@ class TagsController < ApplicationController
 
   private
     def tag_params
-      params.require(:tag).permit(:title, :counter)
+      params.require(:tag).permit(:title)
     end
 end

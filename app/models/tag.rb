@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 class Tag < ApplicationRecord
-  has_and_belongs_to_many :articles, :dependent => :restrict_with_error
+  has_many :taggings
+  has_many :articles, through: :taggings
 
   validates :title, presence: true
-  validates :counter, presence: true, numericality: { only_integer: true }
     
   before_destroy :allow_destroy
+
   private 
     def allow_destroy
-      unless self.articles.empty?
-        self.errors.add('Cannot_delete','In use by Articles')
+      unless self.taggings_count == 0
+        errors.add(:base, 'cannot delete when currently used by Articles')
         throw(:abort)
       end
     end
