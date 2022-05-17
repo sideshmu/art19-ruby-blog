@@ -4,19 +4,14 @@ class CommentsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   ##
-  # Retrieve all approved comments for an article
-  # GET /articles/:article_id/comments
+  # Retrieve all approved comments for an article or optionally pass approval status
+  # GET /articles/:article_id/comments[?approval=<approval>]
   def index
-    @article = Article.find_by_id(params[:article_id])
-    if @article
-      if params[:approval].present?
-        render json: @article.comments.where(approval: params[:approval])
-      else 
-        render json: @article.comments.where(approval: Comment::APPROVAL_STATUS_APPROVED)
-      end
-    else
-      render json: @article, status: :unprocessable_entity
-    end
+    @comments = Comment.where(
+                                article_id: params[:article_id],
+                                approval:   params[:approval].presence || Comment::APPROVAL_STATUS_APPROVED
+                              )
+    render json: @comments
   end
 
   ##
@@ -29,15 +24,15 @@ class CommentsController < ApplicationController
   #   "status": "example status"
   # }
   def create
-    @article = Article.find_by_id(params[:article_id])
+    @article = Article.find(params[:article_id])
     @comment = @article.comments.create(comment_params)
 
-    if @article and @comment.persisted?
+    if @comment.persisted?
       # Process comment asynchronously
       ApprovalJob.perform_async(@comment.id)
-      render json: {article: @article, article_comments: @article.comments}, status: :ok
+      render json: @comment, status: :created
     else
-      render json: @article, status: :unprocessable_entity
+      render json: @comment.errors, status: :unprocessable_entity
     end
   end
 
@@ -51,14 +46,14 @@ class CommentsController < ApplicationController
   #   "status": "Example Status"
   # }
   def update
-    @article = Article.find_by_id(params[:article_id])
-    @comment = @article.comments.find_by_id(params[:id])
+    @article = Article.find(params[:article_id])
+    @comment = @article.comments.find(params[:id])
 
-    if @article and @comment and @comment.update(comment_params)
+    if @comment.update(comment_params)
       ApprovalJob.perform_async(@comment.id)
-      render json: {article: @article, comment: @comment}, status: :ok
+      render json: @comment, status: :ok
     else
-      render json: @article, status: :unprocessable_entity
+      render json: @comment.errors, status: :unprocessable_entity
     end
   end
 
@@ -66,19 +61,19 @@ class CommentsController < ApplicationController
   # Destroy comment on an article
   # DELETE /articles/:article_id/comments/:id
   def destroy
-    @article = Article.find_by_id(params[:article_id])
-    @comment = @article.comments.find_by_id(params[:id])
+    @article = Article.find(params[:article_id])
+    @comment = @article.comments.find(params[:id])
 
-    if @article and @comment and @comment.destroy
-      render json: {msg: "Deleted Comment #{params[:id]} successfully!"}, status: :ok
+    if @comment.destroy
+      render json: { msg: "Deleted Comment #{params[:id]} successfully!" }, status: :ok
     else
-      render json: @article, status: :unprocessable_entity
+      render json: @comment.errors, status: :unprocessable_entity
     end
   end
 
   private
     def comment_params
-      params.require(:comment).permit(:commenter, :body, :status, :approval).with_defaults(approval: "submitted")
+      params.require(:comment).permit(:commenter, :body, :status).with_defaults(approval: "submitted")
     end
   end
   
