@@ -5,55 +5,36 @@ class TagsController < ApplicationController
   ##
   # Retrieve all tags after filtering 
   # If `article_id` is provided, will limit search to that article only
-  # GET /tags?query=<query>&optional_article_id=<optional_article_id>
+  # GET /tags?query=<query>&article_id=<optional_article_id>
   def index
-    unless params[:article_id].nil?
-      @tags = Article.find_by_id(params[:article_id]).tags.where("title LIKE ?", "%#{params[:query]}%")
-    else
-      @tags = Tag.where("title LIKE ?", "%#{params[:query]}%")
-    end
-    render json: @tags, status: :ok
+    @tags = Tag.all
+    @tags = @tags.where("title LIKE ?", "%#{params[:query]}%") if params[:query].present?
+    @tags = @tags.joins(:taggings).merge(Tagging.where(article_id: params[:article_id])) if params[:article_id].present?
+
+    render json: @tags
   end
 
   ##
   # Retrieve tag by :id
   # GET /tags/:id
   def show
-    @tag = Tag.find_by_id(params[:id])
-
-    if @tag
-      render json: @tag, status: :ok
-    else
-      render json: @tag, status: :unprocessable_entity
-    end
+    @tag = Tag.find(params[:id])
+    render json: @tag
   end
   
   ##
-  # Create new tag ([optionally for an article])
+  # Create new tag
   # POST /tags
   # JSON Data:
   # {
-  #   "title": "Example Title",
-  #   "counter": 1,
-  #   "article_id": <article_id>    #Optional
+  #   "title": "Example Title"
   # }
   def create
-    @article = Article.find_by_id(params[:article_id]) 
-
-    if @article
-      @tag = @article.tags.create(tag_params)
-      if @tag.persisted?
-        render json: @tag, status: :ok
-      else
-        render json: @tag.errors, status: :unprocessable_entity
-      end
+    @tag = Tag.new(tag_params)
+    if @tag.save
+      render json: @tag, status: :created
     else
-      @tag = Tag.new(tag_params)
-      if @tag.save
-        render json: @tag, status: :ok
-      else
-        render json: @tag.errors, status: :unprocessable_entity
-      end
+      render json: @tag.errors, status: :unprocessable_entity
     end
   end
 
