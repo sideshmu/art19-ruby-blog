@@ -74,7 +74,7 @@ class ArticlesController < ApplicationController
     if @article.update(article_params)
       render json: @article, status: :ok
     else
-      render json: @article, status: :unprocessable_entity
+      render json: @article.errors, status: :unprocessable_entity
     end
   end
 

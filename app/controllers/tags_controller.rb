@@ -43,26 +43,15 @@ class TagsController < ApplicationController
   # PATCH/PUT /tags/:id
   # JSON Data:
   # {
-  #   "title": "Example Title",
-  #   "counter": 1,
-  #   "article_id": <article_id>    #Optional
+  #   "title": "Example Title"
   # }
   def update
-    @article = Article.find_by_id(params[:article_id])
-    @tag = Tag.find_by_id(params[:id])
+    @tag = Tag.find(params[:id])
 
-    if @article
-      if @tag and @tag.update(tag_params) and @article.tags.update(tag_params)
-        render json: @tag, status: :ok
-      else
-        render json: @tag.errors, status: :unprocessable_entity
-      end
+    if @tag.update(tag_params)
+      render json: @tag, status: :ok
     else
-      if @tag and @tag.update(tag_params)
-        render json: @tag, status: :ok
-      else
-        render json: @tag, status: :unprocessable_entity
-      end
+      render json: @tag.errors, status: :unprocessable_entity
     end
   end
 
@@ -70,10 +59,10 @@ class TagsController < ApplicationController
   # Destroy tag
   # DELETE /tag/:id
   def destroy
-    @tag = Tag.find_by_id(params[:id])
+    @tag = Tag.find(params[:id])
 
-    if @tag and @tag.destroy
-      render json: {msg: "Deleted Tag #{params[:id]} successfully!"}, status: :ok
+    if @tag.destroy
+      render json: {msg: "Deleted Tag #{params[:id]} successfully!"}, status: :no_content
     else
       render json: @tag.errors, status: :unprocessable_entity
     end
