@@ -10,23 +10,23 @@ RSpec.describe "Comments requests", type: :request do
 
   let(:invalid_comment_attributes) do
     {
-      commenter: "Random commenter", 
+      commenter: "Random commenter",
       status: "invalid status"
     }
   end
 
   let(:approved_comment_attributes) do
     {
-      commenter: "Good Guy Gary", 
-      body: "Only writes good comments!", 
-      status: "public"    
+      commenter: "Good Guy Gary",
+      body: "Only writes good comments!",
+      status: "public"
     }
   end
 
   let(:flagged_comment_attributes) do
     {
-      commenter: "Bad Guy Ben", 
-      body: "Only writes bad comments! zoinks!", 
+      commenter: "Bad Guy Ben",
+      body: "Only writes bad comments! zoinks!",
       status: "public"
     }
   end
@@ -35,7 +35,7 @@ RSpec.describe "Comments requests", type: :request do
     before do
       commenters = ['Sam', 'Pam', 'Ham']
       commenters.each do |commenter|
-        article.comments << build(:comment, commenter: commenter) 
+        article.comments << build(:comment, commenter: commenter)
       end
     end
 
@@ -48,7 +48,6 @@ RSpec.describe "Comments requests", type: :request do
 
   describe "POST /create" do
     context "verify comment creation" do
-
       it "returns http created and creates a new comment with status 'submitted'" do
         post article_comments_path(article.id), params: { comment: approved_comment_attributes }
 
@@ -73,7 +72,6 @@ RSpec.describe "Comments requests", type: :request do
 
   describe "PUT /update" do
     context "verify comment updation" do
-
       it "returns http success and returns updated comment with status 'submitted'" do
         # Add a comment, check approval is 'approved'
         article.comments << comment
@@ -93,13 +91,11 @@ RSpec.describe "Comments requests", type: :request do
   end
 
   describe "DELETE /destroy" do
-
     before do
       article.comments << comment
     end
 
     context "verify comment deletion" do
-
       it "returns http no_content and deletes comment" do
         delete article_comment_path(article.id, comment.id)
         expect(response).to have_http_status(:no_content)
@@ -107,7 +103,6 @@ RSpec.describe "Comments requests", type: :request do
     end
 
     context "verify article deletion with comment" do
-      
       it "returns http no_content and deletes article as well as comment" do
         delete article_path(article.id)
 

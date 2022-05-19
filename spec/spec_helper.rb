@@ -19,7 +19,6 @@ RSpec.configure do |config|
   # assertions if you prefer.
   config.before(type: :request) do
     host! "localhost:3000"
-    
   end
 
   config.expect_with :rspec do |expectations|

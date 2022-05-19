@@ -2,6 +2,6 @@
 
 FactoryBot.define do
   factory :tag do
-    title   { "Sample title for tags" }     
+    title { "Sample title for tags" }
   end
 end

@@ -30,7 +30,7 @@ class ArticlesController < ApplicationController
   # def new
   #   @article = Article.new
   # end
-  
+
   ##
   # Create new article
   # POST /articles
@@ -92,7 +92,8 @@ class ArticlesController < ApplicationController
   end
 
   private
-    def article_params
-      params.require(:article).permit(:title, :body, :status)
-    end
+
+  def article_params
+    params.require(:article).permit(:title, :body, :status)
+  end
 end

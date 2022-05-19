@@ -4,10 +4,10 @@ module Approval
   extend ActiveSupport::Concern
 
   APPROVAL_STATUSES = [
-                        Comment::APPROVAL_STATUS_APPROVED,
-                        Comment::APPROVAL_STATUS_FLAGGED,
-                        Comment::APPROVAL_STATUS_SUBMITTED,
-                      ]
+    Comment::APPROVAL_STATUS_APPROVED,
+    Comment::APPROVAL_STATUS_FLAGGED,
+    Comment::APPROVAL_STATUS_SUBMITTED,
+  ]
 
   included do
     validates :approval, inclusion: { in: APPROVAL_STATUSES }
@@ -23,4 +23,3 @@ module Approval
   #   status == 'archived'
   # end
 end
-  

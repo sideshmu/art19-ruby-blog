@@ -8,9 +8,9 @@ class CommentsController < ApplicationController
   # GET /articles/:article_id/comments[?approval=<approval>]
   def index
     @comments = Comment.where(
-                                article_id: params[:article_id],
-                                approval:   params[:approval].presence || Comment::APPROVAL_STATUS_APPROVED
-                              )
+      article_id: params[:article_id],
+      approval: params[:approval].presence || Comment::APPROVAL_STATUS_APPROVED
+    )
     render json: @comments
   end
 
@@ -72,8 +72,8 @@ class CommentsController < ApplicationController
   end
 
   private
-    def comment_params
-      params.require(:comment).permit(:commenter, :body, :status).with_defaults(approval: "submitted")
-    end
+
+  def comment_params
+    params.require(:comment).permit(:commenter, :body, :status).with_defaults(approval: "submitted")
   end
-  
+end

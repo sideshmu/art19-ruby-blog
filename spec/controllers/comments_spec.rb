@@ -6,8 +6,8 @@ Sidekiq::Testing.fake!
 
 RSpec.describe CommentsController, type: :controller do
   let(:article)             { create(:article) }
-  let(:good_comment)        { build(:comment, body: 'good comment')}
-  let(:bad_comment)         { build(:comment, body: 'yoinks !')}
+  let(:good_comment)        { build(:comment, body: 'good comment') }
+  let(:bad_comment)         { build(:comment, body: 'yoinks !') }
 
   context "verify comment approval process" do
     before do

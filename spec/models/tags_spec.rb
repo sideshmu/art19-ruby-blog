@@ -3,19 +3,16 @@
 require "rails_helper"
 
 RSpec.describe Tag, type: :model do
-  
   let(:article) { create(:article) }
   let(:tag) { create(:tag) }
 
   context "verify tag creation" do
-
     it "tag is valid with valid attributes" do
-      expect(tag).to be_valid 
+      expect(tag).to be_valid
     end
   end
 
   context "verify tag deletion" do
-
     it "tag is destroyed when not used in an article" do
       tag.destroy
 

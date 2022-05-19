@@ -17,7 +17,7 @@ class TaggingsController < ApplicationController
     @tagging = Tagging.find(params[:id])
     render json: @tagging
   end
-  
+
   ##
   # Create new tagging
   # POST /taggings
@@ -67,7 +67,8 @@ class TaggingsController < ApplicationController
   end
 
   private
-    def tagging_params
-      params.require(:tagging).permit(:article_id, :tag_id)
-    end
+
+  def tagging_params
+    params.require(:tagging).permit(:article_id, :tag_id)
+  end
 end

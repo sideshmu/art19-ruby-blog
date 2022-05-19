@@ -3,7 +3,7 @@
 class TagsController < ApplicationController
   skip_before_action :verify_authenticity_token
   ##
-  # Retrieve all tags after filtering 
+  # Retrieve all tags after filtering
   # If `article_id` is provided, will limit search to that article only
   # GET /tags?query=<query>&article_id=<optional_article_id>
   def index
@@ -21,7 +21,7 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
     render json: @tag
   end
-  
+
   ##
   # Create new tag
   # POST /tags
@@ -39,7 +39,7 @@ class TagsController < ApplicationController
   end
 
   ##
-  # Edit tag 
+  # Edit tag
   # PATCH/PUT /tags/:id
   # JSON Data:
   # {
@@ -62,14 +62,15 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
 
     if @tag.destroy
-      render json: {msg: "Deleted Tag #{params[:id]} successfully!"}, status: :no_content
+      render json: { msg: "Deleted Tag #{params[:id]} successfully!" }, status: :no_content
     else
       render json: @tag.errors, status: :unprocessable_entity
     end
   end
 
   private
-    def tag_params
-      params.require(:tag).permit(:title)
-    end
+
+  def tag_params
+    params.require(:tag).permit(:title)
+  end
 end

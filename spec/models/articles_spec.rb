@@ -3,19 +3,18 @@
 require 'rails_helper'
 
 RSpec.describe Article, type: :model do
-
   let(:valid_article_attributes) do
     {
-      title: "Test title", 
-      body: "Test body which is long", 
+      title: "Test title",
+      body: "Test body which is long",
       status: "public"
     }
   end
 
   let(:invalid_article_attributes) do
     {
-      title: "Test title", 
-      body: "shortbody", 
+      title: "Test title",
+      body: "shortbody",
       status: "invalid_status"
     }
   end
@@ -24,14 +23,14 @@ RSpec.describe Article, type: :model do
     let(:article) { Article.create(valid_article_attributes) }
 
     it "article is valid with valid attributes" do
-      expect(article).to be_valid 
+      expect(article).to be_valid
     end
 
     let(:invalid_article) { Article.create(invalid_article_attributes) }
 
     it "article is invalid with invalid attributes" do
-        expect(invalid_article).not_to be_valid 
-      end
+      expect(invalid_article).not_to be_valid
+    end
   end
 
   context "verify uniqueness of article title" do
@@ -40,9 +39,9 @@ RSpec.describe Article, type: :model do
     before do
       create(:article, title: 'identical')
     end
-  
+
     it "article with same title is not created" do
-      expect(article).to be_invalid 
+      expect(article).to be_invalid
     end
   end
 end
