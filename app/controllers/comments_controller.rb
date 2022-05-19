@@ -74,6 +74,6 @@ class CommentsController < ApplicationController
   private
 
   def comment_params
-    params.require(:comment).permit(:commenter, :body, :status).with_defaults(approval: "submitted")
+    params.require(:comment).permit(:commenter, :body, :status).with_defaults(approval: 'submitted')
   end
 end

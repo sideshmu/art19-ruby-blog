@@ -11,7 +11,7 @@ class Tag < ApplicationRecord
   private
 
   def allow_destroy
-    unless self.taggings_count == 0
+    unless taggings_count == 0
       errors.add(:base, 'cannot delete when currently used by Articles')
       throw(:abort)
     end

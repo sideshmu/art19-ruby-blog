@@ -5,7 +5,8 @@ class Comment < ApplicationRecord
   APPROVAL_STATUS_FLAGGED   = 'flagged'
   APPROVAL_STATUS_SUBMITTED = 'submitted'
 
-  include Approval, Visible
+  include Visible
+  include Approval
 
   belongs_to :article
 

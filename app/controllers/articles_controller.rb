@@ -7,11 +7,11 @@ class ArticlesController < ApplicationController
   # Retrieve all aritlces with given 'tag_id'
   # GET /articles[?tag_id=<tag_id>]
   def index
-    unless params[:tag_id]
-      @articles = Article.all
-    else
-      @articles = Article.includes(:tags).where(tags: { id: params[:tag_id] })
-    end
+    @articles = if params[:tag_id]
+                  Article.includes(:tags).where(tags: { id: params[:tag_id] })
+                else
+                  Article.all
+                end
     render json: @articles
   end
 

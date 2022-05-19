@@ -6,7 +6,7 @@ module Approval
   APPROVAL_STATUSES = [
     Comment::APPROVAL_STATUS_APPROVED,
     Comment::APPROVAL_STATUS_FLAGGED,
-    Comment::APPROVAL_STATUS_SUBMITTED,
+    Comment::APPROVAL_STATUS_SUBMITTED
   ]
 
   included do
