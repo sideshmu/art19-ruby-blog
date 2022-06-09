@@ -12,22 +12,31 @@ RSpec.describe Tag, type: :model do
     end
   end
 
-  context 'verify tag deletion' do
-    it 'tag is destroyed when not used in an article' do
-      tag.destroy
+  context 'verify tag deletion when not in use by an article' do
+    before { tag.destroy }
 
+    it 'tag is destroyed when not used in an article' do
       expect(tag).to be_destroyed
+    end
+
+    it 'tag destroy does not give any errors when tag not used in an article' do
       expect(tag.errors[:base]).to be_empty
+    end
+  end
+
+  context 'verify tag deletion when used in an article' do
+    # Add tag to article
+    before do
+      article.tags << tag
+      tag.destroy
     end
 
     it 'tag is not destroyed when used in an article' do
-      # Add tag to article
-      article.tags << tag
-      tag.destroy
-
       expect(tag).not_to be_destroyed
+    end
+
+    it 'tag destroy gives errors when tag is used in an article' do
       expect(tag.errors[:base]).to eq ['cannot delete when currently used by Articles']
-      raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

@@ -36,9 +36,7 @@ RSpec.describe Article, type: :model do
   context 'verify uniqueness of article title' do
     let(:article) { build(:article, title: 'identical') }
 
-    before do
-      create(:article, title: 'identical')
-    end
+    before { create(:article, title: 'identical') }
 
     it 'article with same title is not created' do
       expect(article).to be_invalid
