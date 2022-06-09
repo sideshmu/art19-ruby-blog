@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 class ApprovalJobTest < Minitest::Test
   def test_example

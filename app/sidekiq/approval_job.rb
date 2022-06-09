@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class ApprovalJob
   include Sidekiq::Job
 
-  TRIGGER_WORDS = %w[zoinks yoinks doinks oinks boinks]
+  TRIGGER_WORDS = %w[zoinks yoinks doinks oinks boinks].freeze
 
   def perform(comment_id)
     comment = Comment.find_by_id(comment_id)

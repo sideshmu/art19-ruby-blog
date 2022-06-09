@@ -7,7 +7,7 @@ module Approval
     Comment::APPROVAL_STATUS_APPROVED,
     Comment::APPROVAL_STATUS_FLAGGED,
     Comment::APPROVAL_STATUS_SUBMITTED
-  ]
+  ].freeze
 
   included do
     validates :approval, inclusion: { in: APPROVAL_STATUSES }
