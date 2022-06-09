@@ -8,18 +8,19 @@ class Tagging < ApplicationRecord
   validates :article_id, presence: true
   validates :tag_id, presence: true
 
-  before_save :tag_exists?, :article_exists?
+  before_save :abort_unless_tag_exists
+  before_save :abort_unless_article_exists
 
   private
 
-  def tag_exists?
+  def abort_unless_tag_exists
     unless Tag.exists?(id: tag_id)
       errors.add(:base, 'tag does not exist')
       throw(:abort)
     end
   end
 
-  def article_exists?
+  def abort_unless_article_exists
     unless Article.exists?(id: article_id)
       errors.add(:base, 'article does not exist')
       throw(:abort)
