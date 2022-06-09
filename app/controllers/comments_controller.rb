@@ -65,7 +65,7 @@ class CommentsController < ApplicationController
     @comment = @article.comments.find(params[:id])
 
     if @comment.destroy
-      render json: { msg: "Deleted Comment #{params[:id]} successfully!" }, status: :no_content
+      head :no_content
     else
       render json: @comment.errors, status: :unprocessable_entity
     end

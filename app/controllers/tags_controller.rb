@@ -62,7 +62,7 @@ class TagsController < ApplicationController
     @tag = Tag.find(params[:id])
 
     if @tag.destroy
-      render json: { msg: "Deleted Tag #{params[:id]} successfully!" }, status: :no_content
+      head :no_content
     else
       render json: @tag.errors, status: :unprocessable_entity
     end
