@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
   def index
     @comments = Comment.where(
       article_id: params[:article_id],
-      approval: params[:approval].presence || Comment::APPROVAL_STATUS_APPROVED
+      approval: params[:approval].presence || APPROVAL_STATUS_APPROVED
     )
     render json: @comments
   end

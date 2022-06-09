@@ -9,9 +9,9 @@ class ApprovalJob
     comment = Comment.find_by_id(comment_id)
     # Search for trigger words
     if /\b#{Regexp.union(TRIGGER_WORDS).source}\b/i === comment.body
-      comment.update(approval: Comment::APPROVAL_STATUS_FLAGGED)
+      comment.update(approval: Approval::APPROVAL_STATUS_FLAGGED)
     else
-      comment.update(approval: Comment::APPROVAL_STATUS_APPROVED)
+      comment.update(approval: Approval::APPROVAL_STATUS_APPROVED)
     end
   end
 end

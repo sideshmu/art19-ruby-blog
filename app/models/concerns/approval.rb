@@ -4,9 +4,9 @@ module Approval
   extend ActiveSupport::Concern
 
   APPROVAL_STATUSES = [
-    Comment::APPROVAL_STATUS_APPROVED,
-    Comment::APPROVAL_STATUS_FLAGGED,
-    Comment::APPROVAL_STATUS_SUBMITTED
+    APPROVAL_STATUS_APPROVED  = 'approved',
+    APPROVAL_STATUS_FLAGGED   = 'flagged',
+    APPROVAL_STATUS_SUBMITTED = 'submitted'
   ].freeze
 
   included do
