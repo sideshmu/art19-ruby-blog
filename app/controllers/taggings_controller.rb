@@ -60,7 +60,7 @@ class TaggingsController < ApplicationController
     @tagging = Tagging.find(params[:id])
 
     if @tagging.destroy
-      render json: { msg: "Deleted tagging #{params[:id]} successfully!" }, status: :no_content
+      head :no_content
     else
       render json: @tagging.errors, status: :unprocessable_entity
     end
