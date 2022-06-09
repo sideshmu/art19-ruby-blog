@@ -37,7 +37,8 @@ RSpec.describe 'Article requests', type: :request do
   end
 
   describe 'GET /show' do
-    let(:article) { create(:article) }
+    let(:article)    { create(:article) }
+    let(:invalid_id) { "99" }    
 
     it 'returns http success and contains one created article in json response' do
       get article_path(article)
@@ -46,6 +47,12 @@ RSpec.describe 'Article requests', type: :request do
       expect(parsed_response['title']).to eq(article.title)
       expect(parsed_response['body']).to eq(article.body)
       expect(parsed_response['status']).to eq(article.status)
+    end
+
+    it 'returns 404 not found when article id not present' do
+      get article_path(invalid_id)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
