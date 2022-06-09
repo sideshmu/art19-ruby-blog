@@ -2,8 +2,6 @@
 
 require 'rails_helper'
 require 'json'
-require 'sidekiq/testing'
-Sidekiq::Testing.fake!
 
 RSpec.describe 'Comments requests', type: :request do
   let(:parsed_response)     { JSON.parse(response.body) }

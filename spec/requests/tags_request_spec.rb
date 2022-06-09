@@ -38,7 +38,7 @@ RSpec.describe 'Tag requests', type: :request do
 
     context 'query and no article_id is passed ' do
       it 'returns http success and contains all created tags filtered by query in json response' do
-        get tags_path, params: { query: 'common' }
+        get tags_path, params: { query: 'com' }
 
         expect(response).to have_http_status(:ok)
         expect(parsed_response.count).to eq(2)
