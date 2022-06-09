@@ -8,8 +8,8 @@ class TagsController < ApplicationController
   # GET /tags?query=<query>&article_id=<optional_article_id>
   def index
     @tags = Tag.all
-    @tags = @tags.where('title LIKE ?', "%#{params[:query]}%") if params[:query].present?
-    @tags = @tags.joins(:taggings).merge(Tagging.where(article_id: params[:article_id])) if params[:article_id].present?
+    @tags = @tags.matching(params[:query]) if params[:query].present?
+    @tags = @tags.by_article(params[:article_id]) if params[:article_id].present?
 
     render json: @tags
   end
