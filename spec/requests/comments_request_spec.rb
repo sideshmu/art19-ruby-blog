@@ -4,9 +4,9 @@ require 'rails_helper'
 require 'json'
 
 RSpec.describe 'Comments requests', type: :request do
-  let(:parsed_response)     { JSON.parse(response.body) }
-  let(:article)             { create(:article) }
-  let(:comment)             { build(:comment) }
+  let(:parsed_response) { JSON.parse(response.body) }
+  let(:article)         { create(:article) }
+  let(:comment)         { build(:comment) }
 
   let(:invalid_comment_attributes) do
     {

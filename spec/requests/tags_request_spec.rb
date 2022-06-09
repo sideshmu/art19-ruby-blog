@@ -4,15 +4,15 @@ require 'rails_helper'
 require 'json'
 
 RSpec.describe 'Tag requests', type: :request do
-  let(:parsed_response)         { JSON.parse(response.body) }
-  let(:article)                 { create(:article) }
-  let(:tag)                     { create(:tag) }
-  let(:valid_tag_attributes)    { { title: 'valid' } }
-  let(:invalid_tag_attributes)  { { invalid_title: 'invalid' } }
+  let(:parsed_response)        { JSON.parse(response.body) }
+  let(:article)                { create(:article) }
+  let(:tag)                    { create(:tag) }
+  let(:valid_tag_attributes)   { { title: 'valid' } }
+  let(:invalid_tag_attributes) { { invalid_title: 'invalid' } }
 
   describe 'GET /index' do
-    let(:first_article)           { create(:article, title: 'First article') }
-    let(:second_article)          { create(:article, title: 'Second article') }
+    let(:first_article)  { create(:article, title: 'First article') }
+    let(:second_article) { create(:article, title: 'Second article') }
 
     before do
       titles = %w[funny sad boring]

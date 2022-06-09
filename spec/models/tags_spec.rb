@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Tag, type: :model do
   let(:article) { create(:article) }
-  let(:tag) { create(:tag) }
+  let(:tag)     { create(:tag) }
 
   context 'verify tag creation' do
     it 'tag is valid with valid attributes' do

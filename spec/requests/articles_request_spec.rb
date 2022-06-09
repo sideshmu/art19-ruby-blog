@@ -110,8 +110,8 @@ RSpec.describe 'Article requests', type: :request do
   end
 
   describe 'GET /index?tag_id=<tag_id>' do
-    let(:tag)          { create(:tag, title: 'Common Tag Title') }
-    let(:titles)       { %w[First Second Third] }
+    let(:tag)    { create(:tag, title: 'Common Tag Title') }
+    let(:titles) { %w[First Second Third] }
 
     before do
       titles.each do |t|
