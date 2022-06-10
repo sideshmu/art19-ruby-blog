@@ -26,81 +26,78 @@ RSpec.describe 'Article requests', type: :request do
     before do
       titles = %w[First Second Third]
       titles.each { |t| create(:article, title: "#{t} Title") }
+      get articles_path
     end
 
-    it 'returns http success and contains all created articles in json response' do
-      get articles_path
-
+    it 'returns http success' do
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'contains all created articles in json response' do
       expect(parsed_response.map { |ar| ar['title'] }).to match_array(['First Title', 'Second Title', 'Third Title'])
     end
   end
 
   describe 'GET /show' do
     let(:article)    { create(:article) }
-    let(:invalid_id) { "99" }    
+    let(:invalid_id) { "99" }
 
-    it 'returns http success and contains one created article in json response' do
-      get article_path(article)
+    context 'with valid article' do
+      before { get article_path(article) }
 
-      expect(response).to have_http_status(:ok)
-      expect(parsed_response['title']).to eq(article.title)
-      expect(parsed_response['body']).to eq(article.body)
-      expect(parsed_response['status']).to eq(article.status)
+      it { expect(response).to have_http_status(:ok) }
+      it { expect(parsed_response['title']).to eq(article.title) }
+      it { expect(parsed_response['body']).to eq(article.body) }
+      it { expect(parsed_response['status']).to eq(article.status) }
     end
 
-    it 'returns 404 not found when article id not present' do
-      get article_path(invalid_id)
+    context 'with invalid article id' do
+      before { get article_path(invalid_id) }
 
-      expect(response).to have_http_status(:not_found)
+      it 'returns 404 not found when article id not present' do
+        expect(response).to have_http_status(:not_found)
+      end
     end
   end
 
   describe 'POST /create' do
-    context 'verify article creation' do
-      it 'returns http created and creates a new article when valid attributes passed' do
-        post articles_path, params: { article: valid_article_attributes }
+    context 'with valid article attributes verify article creation' do
+      before { post articles_path, params: { article: valid_article_attributes } }
 
-        expect(response).to have_http_status(:created)
+      it { expect(response).to have_http_status(:created) }
+      it { expect(parsed_response['title']).to eq(valid_article_attributes[:title]) }
+      it { expect(parsed_response['body']).to eq(valid_article_attributes[:body]) }
+      it { expect(parsed_response['status']).to eq(valid_article_attributes[:status]) }
+    end
 
-        expect(parsed_response['title']).to eq(valid_article_attributes[:title])
-        expect(parsed_response['body']).to eq(valid_article_attributes[:body])
-        expect(parsed_response['status']).to eq(valid_article_attributes[:status])
-      end
+    context 'with invalid article attributes verify article creation' do
+      before { post articles_path, params: { article: invalid_article_attributes } }
 
-      it 'returns http unprocessable entity and gives errors when invalid attributes passed' do
-        post articles_path, params: { article: invalid_article_attributes }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-
-        expect(parsed_response['body']).to include(/too short/)
-        expect(parsed_response['status']).to include(/is not included in the list/)
-      end
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(parsed_response['body']).to include(/too short/) }
+      it { expect(parsed_response['status']).to include(/is not included in the list/) }
     end
   end
 
   describe 'PUT /update' do
-    context 'verify article updation' do
-      let(:article) { create(:article) }
+    let(:article) { create(:article) }
 
-      it 'returns http success and returns updated article when valid attributes passed' do
-        put article_path(article), params: { article: valid_article_attributes }
+    context 'with valid article attributes verify article updation' do
 
-        expect(response).to have_http_status(:ok)
+      before { put article_path(article), params: { article: valid_article_attributes } }
 
-        expect(parsed_response['title']).to eq(valid_article_attributes[:title])
-        expect(parsed_response['body']).to eq(valid_article_attributes[:body])
-        expect(parsed_response['status']).to eq(valid_article_attributes[:status])
-      end
+      it { expect(response).to have_http_status(:ok)}
+      it { expect(parsed_response['title']).to eq(valid_article_attributes[:title]) }
+      it { expect(parsed_response['body']).to eq(valid_article_attributes[:body]) }
+      it { expect(parsed_response['status']).to eq(valid_article_attributes[:status]) }
+    end
 
-      it 'returns http unprocessable entity and gives errors when invalid attributes passed' do
-        put article_path(article), params: { article: invalid_article_attributes }
+    context 'with invalid article attributes verify article updation' do
+      before { put article_path(article), params: { article: invalid_article_attributes } }
 
-        expect(response).to have_http_status(:unprocessable_entity)
-
-        expect(parsed_response['body']).to include(/too short/)
-        expect(parsed_response['status']).to include(/is not included in the list/)
-      end
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(parsed_response['body']).to include(/too short/) }
+      it { expect(parsed_response['status']).to include(/is not included in the list/) }
     end
   end
 
@@ -108,9 +105,9 @@ RSpec.describe 'Article requests', type: :request do
     context 'verify article deletion' do
       let(:article) { create(:article) }
 
-      it 'returns http no_content and deletes article' do
-        delete article_path(article)
+      before { delete article_path(article) }
 
+      it 'returns http no_content and deletes article' do
         expect(response).to have_http_status(:no_content)
       end
     end
@@ -128,17 +125,27 @@ RSpec.describe 'Article requests', type: :request do
       # Create extra article to validate count
       create(:article, title: 'Dummy article')
     end
+    
+    context 'with multiple articles with same tag' do
+      before { get articles_path, params: { tag_id: tag.id } }
 
-    it 'returns http success and contains all articles with given tag_id' do
-      get articles_path, params: { tag_id: tag.id }
+      it 'returns http success' do
+        expect(response).to have_http_status(:ok)
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(parsed_response.count).to eq titles.count
-      expect(parsed_response.count).not_to eq Article.count
+      it 'has the same count as the number of tagged articles' do
+        expect(parsed_response.count).to eq titles.count
+      end
 
-      parsed_response.each_with_index do |res, idx|
-        expect(res['title']).to eq("#{titles[idx]} title")
-        expect(res['body']).to eq('Sample body which is long')
+      it 'does not have the same count as the total num of articles' do
+        expect(parsed_response.count).not_to eq Article.count
+      end
+
+      it 'returns the correct tagged articles' do
+        parsed_response.each_with_index do |res, idx|
+          expect(res['title']).to eq("#{titles[idx]} title")
+          expect(res['body']).to eq('Sample body which is long')
+        end      
       end
     end
   end
