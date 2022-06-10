@@ -32,4 +32,19 @@ RSpec.describe Comment, type: :model do
       expect { article.comments << comment }.to change(ApprovalJob.jobs, :size).by(1)
     end
   end
+
+  context 'verify comment body update' do
+    before do
+      article.comments << comment
+      ApprovalJob.new.perform(comment.id)
+    end
+
+    it 'comment approval is updated when body is changed' do
+      # Change comment body
+      comment.body = "Changed body"
+      comment.save
+
+      expect(comment.approval).to eq('submitted')
+    end
+  end
 end
