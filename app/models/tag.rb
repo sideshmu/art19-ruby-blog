@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Tag < ApplicationRecord
-  scope :matching, ->(query) { where("title LIKE ?", "%#{query}%") }
-  scope :by_article, ->(article_id) { joins(:taggings).merge(Tagging.where(article_id: "#{article_id}")) }
+  scope :matching, ->(query) { where('title LIKE ?', "%#{query}%") }
+  scope :by_article, ->(article_id) { joins(:taggings).merge(Tagging.where(article_id: article_id.to_s)) }
 
   has_many :taggings
   has_many :articles, through: :taggings

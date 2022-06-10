@@ -40,7 +40,7 @@ RSpec.describe 'Article requests', type: :request do
 
   describe 'GET /show' do
     let(:article)    { create(:article) }
-    let(:invalid_id) { "99" }
+    let(:invalid_id) { '99' }
 
     context 'with valid article' do
       before { get article_path(article) }
@@ -83,10 +83,9 @@ RSpec.describe 'Article requests', type: :request do
     let(:article) { create(:article) }
 
     context 'with valid article attributes verify article updation' do
-
       before { put article_path(article), params: { article: valid_article_attributes } }
 
-      it { expect(response).to have_http_status(:ok)}
+      it { expect(response).to have_http_status(:ok) }
       it { expect(parsed_response['title']).to eq(valid_article_attributes[:title]) }
       it { expect(parsed_response['body']).to eq(valid_article_attributes[:body]) }
       it { expect(parsed_response['status']).to eq(valid_article_attributes[:status]) }
@@ -125,7 +124,7 @@ RSpec.describe 'Article requests', type: :request do
       # Create extra article to validate count
       create(:article, title: 'Dummy article')
     end
-    
+
     context 'with multiple articles with same tag' do
       before { get articles_path, params: { tag_id: tag.id } }
 
@@ -145,7 +144,7 @@ RSpec.describe 'Article requests', type: :request do
         parsed_response.each_with_index do |res, idx|
           expect(res['title']).to eq("#{titles[idx]} title")
           expect(res['body']).to eq('Sample body which is long')
-        end      
+        end
       end
     end
   end

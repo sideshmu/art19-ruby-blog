@@ -19,8 +19,6 @@ class Comment < ApplicationRecord
   end
 
   def queue_processing_job
-    if self.approval == APPROVAL_STATUS_SUBMITTED
-      ApprovalJob.perform_async(self.id)
-    end
+    ApprovalJob.perform_async(id) if approval == APPROVAL_STATUS_SUBMITTED
   end
 end

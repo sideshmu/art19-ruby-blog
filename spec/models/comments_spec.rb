@@ -41,7 +41,7 @@ RSpec.describe Comment, type: :model do
 
     it 'comment approval is updated when body is changed' do
       # Change comment body
-      comment.body = "Changed body"
+      comment.body = 'Changed body'
       comment.save
 
       expect(comment.approval).to eq('submitted')
