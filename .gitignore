@@ -39,3 +39,6 @@ dump.rdb
 
 # Ignore .rspec
 .rspec
+
+# Ignore .yardoc/
+.yardoc/
