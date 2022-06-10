@@ -26,4 +26,10 @@ RSpec.describe Comment, type: :model do
       expect { comment.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
+
+  context 'verify approval job is triggered' do
+    it 'when comment is saved it triggers approval job' do
+      expect { article.comments << comment }.to change(ApprovalJob.jobs, :size).by(1)
+    end
+  end
 end

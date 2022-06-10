@@ -9,7 +9,7 @@ class CommentsController < ApplicationController
   def index
     @comments = Comment.where(
       article_id: params[:article_id],
-      approval: params[:approval].presence || APPROVAL_STATUS_APPROVED
+      approval: params[:approval].presence || Approval::APPROVAL_STATUS_APPROVED
     )
     render json: @comments
   end
@@ -28,8 +28,6 @@ class CommentsController < ApplicationController
     @comment = @article.comments.create(comment_params)
 
     if @comment.persisted?
-      # Process comment asynchronously
-      ApprovalJob.perform_async(@comment.id)
       render json: @comment, status: :created
     else
       render json: @comment.errors, status: :unprocessable_entity
@@ -50,7 +48,6 @@ class CommentsController < ApplicationController
     @comment = @article.comments.find(params[:id])
 
     if @comment.update(comment_params)
-      ApprovalJob.perform_async(@comment.id)
       render json: @comment, status: :ok
     else
       render json: @comment.errors, status: :unprocessable_entity
