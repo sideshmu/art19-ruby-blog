@@ -37,76 +37,83 @@ RSpec.describe 'Comments requests', type: :request do
       commenters.each do |commenter|
         article.comments << build(:comment, commenter: commenter)
       end
+      get article_comments_path(article.id), params: { approval: 'submitted' }
     end
 
-    it "returns http success and contains all 'submitted comments' for the article in json response" do
-      get article_comments_path(article.id), params: { approval: 'submitted' }
+    it 'returns http success response' do
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'contains all submitted comments for the article in json response' do
       expect(parsed_response.map { |comment| comment['commenter'] }).to match_array(%w[Sam Pam Ham])
     end
   end
 
   describe 'POST /create' do
-    context 'verify comment creation' do
-      it "returns http created and creates a new comment with status 'submitted'" do
-        post article_comments_path(article.id), params: { comment: approved_comment_attributes }
+    context 'with valid comment attributes verify comment creation' do
+      before { post article_comments_path(article.id), params: { comment: approved_comment_attributes } }
 
-        expect(response).to have_http_status(:created)
+      it { expect(response).to have_http_status(:created) }
+      it { expect(parsed_response['commenter']).to eq(approved_comment_attributes[:commenter]) }
+      it { expect(parsed_response['body']).to eq(approved_comment_attributes[:body]) }
+      it { expect(parsed_response['status']).to eq(approved_comment_attributes[:status]) }
+      it { expect(parsed_response['approval']).to eq('submitted') }
+    end
 
-        expect(parsed_response['commenter']).to eq(approved_comment_attributes[:commenter])
-        expect(parsed_response['body']).to eq(approved_comment_attributes[:body])
-        expect(parsed_response['status']).to eq(approved_comment_attributes[:status])
-        expect(parsed_response['approval']).to eq('submitted')
-      end
+    context 'with invalid comment attributes verify comment creation' do
+      before { post article_comments_path(article.id), params: { comment: invalid_comment_attributes } }
 
-      it 'returns http unprocessable_entity and when invalid comment attributes are passed' do
-        post article_comments_path(article.id), params: { comment: invalid_comment_attributes }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-
-        expect(parsed_response['body']).to include(/can't be blank/)
-        expect(parsed_response['status']).to include(/is not included in the list/)
-      end
+      it { expect(response).to have_http_status(:unprocessable_entity) }
+      it { expect(parsed_response['body']).to include(/can't be blank/) }
+      it { expect(parsed_response['status']).to include(/is not included in the list/) }
     end
   end
 
   describe 'PUT /update' do
-    context 'verify comment updation' do
-      it "returns http success and returns updated comment with status 'submitted'" do
-        # Add a comment, check approval is 'approved'
+    context 'with approved comment verify comment updation' do
+      before do
+        # Add a comment, approval is now 'approved'
         article.comments << comment
         ApprovalJob.new.perform(comment.id)
         comment.reload
-        expect(comment.commenter).to eq('Bob')
-        expect(comment.approval).to eq('approved')
 
-        # Update the comment, check approval is 'submitted'
+        # Update the comment
         put article_comment_path(article.id, comment.id), params: { comment: approved_comment_attributes }
+      end
 
+      it 'returns http success' do
         expect(response).to have_http_status(:ok)
+      end
+
+      it 'updates commenter' do
         expect(parsed_response['commenter']).to eq(approved_comment_attributes[:commenter])
+      end
+
+      it "updates comment with status 'submitted'" do
         expect(parsed_response['approval']).to eq('submitted')
       end
     end
   end
 
   describe 'DELETE /destroy' do
-    before do
-      article.comments << comment
-    end
+    before { article.comments << comment }
 
-    context 'verify comment deletion' do
+    context 'when deleting a comment' do
+      before { delete article_comment_path(article.id, comment.id) }
+
       it 'returns http no_content and deletes comment' do
-        delete article_comment_path(article.id, comment.id)
         expect(response).to have_http_status(:no_content)
       end
     end
 
-    context 'verify article deletion with comment' do
-      it 'returns http no_content and deletes article as well as comment' do
-        delete article_path(article.id)
+    context 'when deleting article with comment' do
+      before { delete article_path(article.id) }
 
+      it 'deletes article' do
         expect { article.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'deletes comment' do
         expect { comment.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
